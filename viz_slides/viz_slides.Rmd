@@ -1,8 +1,7 @@
 ---
 title: | 
-    | Getting Started in R
-    | an introduction to data visualisation
-subtitle: "Visualising Data"
+    | Data Visualisation 101
+    | 
 author: "Réka Solymosi"
 date: "`r format(Sys.time(), '%d-%b-%Y')`"
 output:
@@ -60,7 +59,14 @@ Predicts Children’s College Chances](https://www.nytimes.com/interactive/2015/
 
 
 ---
-### Let's have a go
+class: center, middle
+
+
+.large[Let's have a go: visualise the relationship between class of travel and survival on the Titanic]
+
+[Get the data](https://www.dropbox.com/s/2a3b7w6ynn7zjq6/titanic.xls?dl=1)
+
+![](https://media.giphy.com/media/OJw4CDbtu0jde/giphy.gif)
 
 
 
@@ -73,7 +79,9 @@ class: center, middle
 [Stephen Few: Show Me the Numbers](https://www.goodreads.com/book/show/543936.Show_Me_the_Numbers)
 
 ---
-###Every decision must have meaning
+class: center, middle
+
+.large[Every decision must have meaning]
 
 ---
 ### Visual perception
@@ -87,22 +95,22 @@ y <- c(1, 1)
 z <- c(8, 9)
 dat <- data.frame(x, y, z)
 
-ggplot(dat, aes(x, y, size = z)) + geom_point() +
+ggplot(dat, aes(x, y, size = z)) + geom_point(aes(x=x, y=y), data=dat, size=50, shape=1, fill="black") +
   theme(axis.line=element_blank(),
         axis.text.x=element_blank(),
-          axis.text.y=element_blank(),
+        axis.text.y=element_blank(),
         axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
         legend.position="none",
-          panel.background=element_blank(),
+        panel.background=element_blank(),
         panel.border=element_blank(),
         panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
+        panel.grid.minor=element_blank(),
         plot.background=element_blank()) + 
   scale_size_area() + 
-  xlim(0,3) +
-  geom_text(aes(label=z),hjust=0, vjust=2)
+  xlim(0.5,2.5) +
+  geom_text(aes(label=z),hjust=0, vjust=6)
 ```
  ]
 
@@ -132,10 +140,42 @@ ggplot(dat, aes(as.factor(z), z)) +
 ```
 ]
 
+[Andy Kirk](https://www.sciencecomm.ch/images/Kirk%20Andy.pdf)
+---
+### Visual perception
+
+![](https://eagereyes.org/wp-content/uploads/2016/07/simplevis-abserror-relative.png)
+
+[Robert Kosara](https://eagereyes.org/blog/2016/a-reanalysis-of-a-study-about-square-pie-charts-from-2009)
+
+
+---
+class: center, middle
+<img src="img/3d_pie.png"  />
+[Andy Kirk](https://www.sciencecomm.ch/images/Kirk%20Andy.pdf)
+
+
+---
+
+![](http://www.infovis-wiki.net/images/thumb/5/55/DIR.jpg/800px-DIR.jpg)
+
+[Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi)
+
+---
+
+![](https://i1.wp.com/flowingdata.com/wp-content/uploads/2009/01/chart-chart1.jpg)
+
+[Nathan Yau](https://flowingdata.com/2009/01/15/flow-chart-shows-you-what-chart-to-use/)
+
+---
+class: center, middle
+.large[Creating a plot in R]
+
 ---
 ### The grammar of graphics
 
-![](/Users/reka/Desktop/course-incubator/images/table.png)
+
+<img src="img/table.png"/>
 
 
 [Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
@@ -143,15 +183,8 @@ ggplot(dat, aes(as.factor(z), z)) +
 ---
 ### The grammar of graphics
 
-![](/Users/reka/Desktop/course-incubator/images/layers.png)
 
-
-
-[Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
----
-### The grammar of graphics
-
-![](/Users/reka/Desktop/course-incubator/images/combined.png)
+<img src="img/layers.png" />
 
 
 [Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
@@ -159,7 +192,8 @@ ggplot(dat, aes(as.factor(z), z)) +
 ---
 ### The grammar of graphics
 
-![](/Users/reka/Desktop/course-incubator/images/combined.png)
+<img src="img/combined.png" />
+
 
 
 [Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
@@ -168,7 +202,9 @@ ggplot(dat, aes(as.factor(z), z)) +
 
 ---
 class: center, middle
-.large[Creating a plot in R]
+.large[Let's get to plotting in R]
+
+[Get the script](https://www.dropbox.com/s/h1w6mal6vu8mhio/script.R?dl=0)
 
 ---
 ### `babynames`

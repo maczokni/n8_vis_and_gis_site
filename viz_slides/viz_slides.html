@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Getting Started in R an introduction to data visualisation</title>
+    <title>Data Visualisation 101</title>
     <meta charset="utf-8">
     <meta name="author" content="Réka Solymosi" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
@@ -11,9 +11,7 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# <p>Getting Started in R<br />
-an introduction to data visualisation</p>
-## Visualising Data
+# <p>Data Visualisation 101</p>
 ### Réka Solymosi
 ### 17-Mar-2018
 
@@ -61,7 +59,14 @@ Predicts Children’s College Chances](https://www.nytimes.com/interactive/2015/
 
 
 ---
-### Let's have a go
+class: center, middle
+
+
+.large[Let's have a go: visualise the relationship between class of travel and survival on the Titanic]
+
+[Get the data](https://www.dropbox.com/s/2a3b7w6ynn7zjq6/titanic.xls?dl=1)
+
+![](https://media.giphy.com/media/OJw4CDbtu0jde/giphy.gif)
 
 
 
@@ -74,7 +79,9 @@ class: center, middle
 [Stephen Few: Show Me the Numbers](https://www.goodreads.com/book/show/543936.Show_Me_the_Numbers)
 
 ---
-###Every decision must have meaning
+class: center, middle
+
+.large[Every decision must have meaning]
 
 ---
 ### Visual perception
@@ -88,10 +95,42 @@ class: center, middle
 ![](viz_slides_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
 ]
 
+[Andy Kirk](https://www.sciencecomm.ch/images/Kirk%20Andy.pdf)
+---
+### Visual perception
+
+![](https://eagereyes.org/wp-content/uploads/2016/07/simplevis-abserror-relative.png)
+
+[Robert Kosara](https://eagereyes.org/blog/2016/a-reanalysis-of-a-study-about-square-pie-charts-from-2009)
+
+
+---
+class: center, middle
+&lt;img src="img/3d_pie.png"  /&gt;
+[Andy Kirk](https://www.sciencecomm.ch/images/Kirk%20Andy.pdf)
+
+
+---
+
+![](http://www.infovis-wiki.net/images/thumb/5/55/DIR.jpg/800px-DIR.jpg)
+
+[Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi)
+
+---
+
+![](https://i1.wp.com/flowingdata.com/wp-content/uploads/2009/01/chart-chart1.jpg)
+
+[Nathan Yau](https://flowingdata.com/2009/01/15/flow-chart-shows-you-what-chart-to-use/)
+
+---
+class: center, middle
+.large[Creating a plot in R]
+
 ---
 ### The grammar of graphics
 
-![](/Users/reka/Desktop/course-incubator/images/table.png)
+
+&lt;img src="img/table.png"/&gt;
 
 
 [Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
@@ -99,15 +138,8 @@ class: center, middle
 ---
 ### The grammar of graphics
 
-![](/Users/reka/Desktop/course-incubator/images/layers.png)
 
-
-
-[Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
----
-### The grammar of graphics
-
-![](/Users/reka/Desktop/course-incubator/images/combined.png)
+&lt;img src="img/layers.png" /&gt;
 
 
 [Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
@@ -115,7 +147,8 @@ class: center, middle
 ---
 ### The grammar of graphics
 
-![](/Users/reka/Desktop/course-incubator/images/combined.png)
+&lt;img src="img/combined.png" /&gt;
+
 
 
 [Wickham, H. (2010). A layered grammar of graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28.](http://vita.had.co.nz/papers/layered-grammar.pdf)
@@ -124,7 +157,9 @@ class: center, middle
 
 ---
 class: center, middle
-.large[Creating a plot in R]
+.large[Let's get to plotting in R]
+
+[Get the script](https://www.dropbox.com/s/h1w6mal6vu8mhio/script.R?dl=0)
 
 ---
 ### `babynames`
