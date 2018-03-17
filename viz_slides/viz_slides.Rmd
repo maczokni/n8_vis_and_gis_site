@@ -60,22 +60,77 @@ Predicts Children’s College Chances](https://www.nytimes.com/interactive/2015/
 
 
 ---
+### Let's have a go
+
+
+
+---
 
 class: center, middle
 
-.large[The good news is, although the skills required to present data effectively are
-not all intuitive, they are easy to learn. The resources are available...]
+.large[The skills required to present data effectively are not all intuitive, but they can be learned.]
 
 [Stephen Few: Show Me the Numbers](https://www.goodreads.com/book/show/543936.Show_Me_the_Numbers)
 
 ---
+###Every decision must have meaning
+
+---
 ### Visual perception
 
-```{r}
+.pull-left[
+```{r, echo=FALSE}
 
+library(ggplot2)
+x <- c(1, 2)
+y <- c(1, 1)
+z <- c(8, 9)
+dat <- data.frame(x, y, z)
+
+ggplot(dat, aes(x, y, size = z)) + geom_point() +
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+          axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),
+        legend.position="none",
+          panel.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),
+        plot.background=element_blank()) + 
+  scale_size_area() + 
+  xlim(0,3) +
+  geom_text(aes(label=z),hjust=0, vjust=2)
+```
+ ]
+
+.pull-right[
+
+```{r, echo=FALSE}
+
+ggplot(dat, aes(as.factor(z), z)) + 
+  geom_bar(stat="identity") +
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text=element_text(size=24),
+      #    axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),
+        legend.position="none",
+          panel.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),
+        plot.background=element_blank()) +
+  coord_flip() 
+  
+  
 
 ```
-
+]
 
 ---
 ### The grammar of graphics
@@ -112,93 +167,424 @@ not all intuitive, they are easy to learn. The resources are available...]
 
 
 ---
-### Creating a plot in R
-
-```{r}
-library(ggplot2)
-```
-
-
-```{r, out.height= "400px"}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy))
-```
- 
-  
+class: center, middle
+.large[Creating a plot in R]
 
 ---
-### Pseudocode
+### `babynames`
+Names of boys and girls born each year in the U.S. since 1880
+```{r}
+library(babynames)
+babynames
+```
 
+---
+class: center, middle
+<img src="img/baby_plot.png" height="600px" />
 
+---
+## The R code
 ```{r, eval=FALSE}
+library(tidyverse) ; library(babynames) ; 
 
-ggplot(data = <DATA>) + 
-  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
-
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
 ```
-
-
 
 ---
-### 3 variables to 1 plot: `colour =`
+class: center, middle, inverse
+# Break it down
+---
 
+### Load the R packages
+<br>
+.pull-left[
+```r
+*library(tidyverse) ; library(babynames) ; 
 
-```{r, out.height= "350px"}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy, colour = class))
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
 ```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+library(tidyverse) ; library(babynames) ; 
+```
+]
 
 ---
-### 3 variables to 1 plot: `size =`
+### Access the `babynames` data
+<br>
+.pull-left[
+```r
+library(tidyverse) ; library(babynames) ; 
 
-```{r, out.height= "350px"}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+*babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
 ```
+]
 
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames) ; 
 
+babynames
+```
+]
+---
+### Subset the data
+<br>
+.pull-left[
+```r
+library(tidyverse) ; library(babynames) ; 
+
+babynames %>%
+* filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
+```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames) ; 
+
+babynames %>%
+  filter(name == "Mabel")
+```
+]
 
 ---
-### 3 variables to 1 plot: `shape =`
+### Initialise a `ggplot()` object, inherit the filtered data, and map variables to the x and y axes
+.pull-left[
+```r
+library(tidyverse) ; library(babynames) ; 
 
-```{r, out.height= "350px"}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+babynames %>%
+  filter(name == "Mabel") %>%
+* ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
 ```
+]
 
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames) ; 
 
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n))
+```
+]
 
 ---
-### 3 variables to 1 plot: `facet_wrap()`
+### Use `geom_line()` to connect the observations, map the `sex` variable to colour and set the line thickness
+.pull-left[
+```r
+library(tidyverse) ; library(babynames) ; 
 
-```{r, out.height= "350px"}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy)) + 
-  facet_wrap(~ class, nrow = 2)
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+* geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
 ```
+]
 
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames) ; 
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2)
+```
+]
 
 ---
-### Geoms
+### Specify which colours the `sex` variable is mapped to
+<br>
+.pull-left[
+```r
+library(tidyverse) ; library(babynames) ; 
 
-How are these two plots similar?
-
-```{r, out.width = "400px", echo=FALSE}
-knitr::include_graphics("http://r4ds.had.co.nz/visualize_files/figure-html/unnamed-chunk-18-1.png")
-knitr::include_graphics("http://r4ds.had.co.nz/visualize_files/figure-html/unnamed-chunk-18-2.png")
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+* scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+*                    labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
 ```
+]
 
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames)  
 
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male"))
+```
+]
 
 ---
-### Geoms
+### Add a title, label the axes, include a caption, and drop the legend title
+<br>
+.pull-left[
+```r
+library(tidyverse) ; library(babynames)  
 
-
-```{r}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy)) +
-  geom_smooth(mapping = aes(x = displ, y = hwy))
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+* labs(title = "Babies named Mabel between 1880 and 2015",
+*      x = "Year", 
+*      y = "Frequency",
+*      caption = "Source: Social Security Administration",
+*      color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
 ```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames)  
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "")
+```
+]
+
+---
+### Use a `ggplot2` theme to format the chart
+<br>
+.pull-left[
+```r
+library(tidyverse) ; library(babynames)  
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+* theme_minimal() +
+  theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
+```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames)  
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal()
+```
+]
+
+---
+### Move the legend to the top of the plot
+<br>
+.pull-left[
+```r
+library(tidyverse) ; library(babynames)  
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+* theme(legend.position = "top")
+ggsave("baby_plot.png", scale=1, dpi=300)
+```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames)  
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+]
+
+---
+### Save the plot as a png at a high resolution
+<br>
+.pull-left[
+```r
+library(tidyverse) ; library(babynames) 
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+*ggsave("baby_plot.png", scale=1, dpi=300)
+```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+# library(tidyverse) ; library(babynames)  
+
+babynames %>%
+  filter(name == "Mabel") %>%
+  ggplot(data = ., aes(x = year, y = n)) +
+  geom_line(aes(color = sex), size = 2) +
+  scale_color_manual(values = c("#66c2a5", "#ff7f00"),
+                     labels = c("Female", "Male")) +
+  labs(title = "Babies named Mabel between 1880 and 2015",
+       x = "Year", 
+       y = "Frequency",
+       caption = "Source: Social Security Administration",
+       color = "") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+]
+
+---
+class: center, middle, inverse
+
+# Your turn
+
+
+
 
 
 ---
@@ -206,111 +592,26 @@ ggplot(data = mpg) +
 
 ![](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2-1.png)
 
-<!--
----
-###Axes
-```{r, out.height=300}
-bp <- ggplot(PlantGrowth, aes(x=group, y=weight)) +
-    geom_boxplot()
-bp
-
-```
-
----
-###Axes
-
-
-```{r, out.height=300}
-
-bp + coord_flip()
-
-```
-
-
----
-###Axes
-
-
-```{r, out.height=300}
-
-bp + scale_x_discrete(breaks=c("ctrl", "trt1", "trt2"),
-                      labels=c("Control", "Treat 1", "Treat 2"))
-
-```
-
-
----
-###Axes
-
-
-```{r, out.height=300}
-# Hide x tick marks, labels, and grid lines
-bp + scale_x_discrete(breaks=NULL)
-```
 
 
 
 ---
-###Axes
+### (Some) Resources
 
+Books:
 
-```{r, out.height=300}
-# Hide x tick marks, labels, and grid lines
-bp + theme(axis.text.x = element_text(face="bold", color="#993333", 
-                           size=14, angle=45),
-          axis.text.y = element_text(face="bold", color="#993333", 
-                           size=14, angle=45))
-```
+- [Edward Tufte: The Visual Display of Quantitative Information](https://www.edwardtufte.com/tufte/books_vdqi)
+- [Alberto Cairo: The Turthful Art](http://www.thefunctionalart.com/p/the-truthful-art-book.html)
+- [Andy Kirk: Data Visualisation: A Handbook for Data Driven Design](http://www.visualisingdata.com/book/)
 
+Talks: 
 
----
-###Rcolorbrewer
+- [Amanda Cox at OpenVis Conference](https://www.youtube.com/watch?v=0L1tGo-DvD0)
+- [David McCandless](https://www.ted.com/talks/david_mccandless_the_beauty_of_data_visualization)
 
-[Sequential, diverging and qualitative colour scales from colorbrewer.org](http://ggplot2.tidyverse.org/reference/scale_brewer.html)
+Blogs: 
 
----
-###Rcolorbrewer
+- [Tiffany Farrant-Gonzalez blog](http://www.tiffanyfarrant.com/blog/)
+- [Krisztina Szūcs](http://krisztinaszucs.com/)
+- [Nathan Yau](https://flowingdata.com/)
 
-```{r, out.height=300}
-dsamp <- diamonds[sample(nrow(diamonds), 1000), ]
-(d <- ggplot(dsamp, aes(carat, price)) +
-  geom_point(aes(colour = clarity)))
-```
-
-
----
-###Rcolorbrewer
-
-```{r, out.height=300}
-d + scale_colour_brewer()
-```
-
-
----
-###Rcolorbrewer
-
-```{r, out.height=300}
-d + scale_colour_brewer(palette = "Greens")
-```
-
-
----
-###Rcolorbrewer
-
-```{r, eval=FALSE}
-?scales::brewer_pal
-```
-
-
----
-### Interactivity! 
-
-```{r, warning=FALSE, message=FALSE, out.height=300}
-library(plotly)
-```
-```{r}
-ggplotly( d + scale_colour_brewer(palette = "Greens"))
-
-```
-
--->
