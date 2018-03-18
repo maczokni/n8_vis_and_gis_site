@@ -311,11 +311,7 @@ Now this is great! We can see that the higher the league the more banning orders
 We'll now go through some examples of making graphs using ggplot package 
 
 
-#Histograms
-
-
-[Histograms](http://www.learner.org/courses/againstallodds/unitpages/unit03.html) are useful ways of representing quantitative variables visually. 
-
+#ggplot 
 
 As mentioned earlier, we will emphasise in this course the use of the `ggplot()` function. With `ggplot()` you start with a blank canvass and keep adding specific layers. The `ggplot()` function can specify the dataset and the aesthetics (the visual characteristics that represent the data). 
 
@@ -340,114 +336,6 @@ gapminder_2007 <- filter(gapminder, year==2007)
 
 
 OK so let's make a graph about the variable which represents the life expectancy by country ('lifeExp').
-
-
-If you want to produce a histogram with the `ggplot` function you would use the following equivalent code:
-
-
-
-```{r}
-ggplot(gapminder_2007, aes(x = lifeExp)) + #The "aes" argument defines the aesthetics for the plot, here we are telling R the data we will represent comes from the gapminder data and our X variable, displayed in the X axis, will be life expectancy. So we are specfying we are using the "lifeExp" variable to display a position in the X axis.
-  geom_histogram() #If we just run the function in the first line we won't be plotting anything, we have to gell R what type of object, or geom, is going to represent the data that we specified in the aesthetics. There are multiple geoms we can use. For a histogram we use the geom_histogram.
-```
-
-
-So you can see that `ggplot` works in a way that you can add a series of additional specifications (layers, annotations). In this simple plot the `ggplot` function simply maps *lifeExp* as the variable to be displayed (as one of the aesthetics) and the dataset. Then you add the `geom_histogram` to tell R that you want this variable to be represented as a histogram. Later we will see what other things you can add.
-
-
-A histogram is simply putting cases in "bins" and then creates a bar for each bin. You can think of it as a visual grouped frequency distribution. The code we have used so far has used a bin-width of size range/30 as R kindly reminded us. But you can modify this parameter if you want to get a rougher or a more granular picture. In fact, you should *always* play around with different specifications of the bin-width until you find one that tells the full story in a parsimonious way.
-
-
-
-```{r}
-ggplot(gapminder_2007, aes(x = lifeExp)) +
-  geom_histogram(binwidth = 1) #We can pass arguments to the the geoms, here we are changing the size of the bins (for further details on other arguments you can check the help files)
-```
-
-
-Using bin-width of 1 we are essentially creating a bar for every one unit increase in the life expectancy. We can see that most countries have life expectancy of 60 or over.
-
-
-```{r}
-#Let's sum the number of countries with a value of 60 or over in life expectancy
-sum(gapminder_2007$lifeExp >= 60 )
-```
-
-
-We can see that the large majority of countries, 99 out of 142, have a life expectancy over 60. But we can also see that there are some countries that have a low life expectancies. You can see how we can use visualisations to show the data and get a first feeling for how it may be distributed.
-
-
-Often we visualise data because we want to compare distributions. **Most of data analysis is about making comparisons**. We are going to explore whether the life expectancy is different for less affluent countries. The variable *gdpPercap* measures the country's GDP per capita. For the purposes of this illustration I want to dichotomise this variable. We've covered data manipulation already, so you should be comfortable splitting the data. Here we will be grouping anything that's got GDP higher than the mean as "high gdp", and everything else as "low gdp". 
-
-
-```{r}
-
-gapminder_2007 <- gapminder_2007 %>%
-  mutate(gdp_factor = if_else(gdpPercap > mean(gdpPercap), "high gdp", "low gdp"))
-
-gapminder_2007$gdp_factor <- as.factor(gapminder_2007$gdp_factor) #The variable we created was a character vector, this step transforms it into a factor (many functions designed to work with categorical variables expect a factor as an input, not just a character vector)
-
-```
-
-
-Now we can produce the plot:
-
-
-```{r}
-ggplot(gapminder_2007, aes(x = lifeExp)) +
-  geom_histogram(binwidth = 1) +
-  facet_grid(gdp_factor ~ .) #Facets are another element of the grammar of graphics, we use it to define subsets of the data to be represented as multiple groups, here we are asking R to produce two plots defined by the two levels of the factor we just created.
-```
-
-
-Visually this may not look great, but it begins to tell a story. We can see that there is a considerable lower proportion of countries with low life expectency in the group of countries that have higher life expectancies. It is a flatter, less skewed distribution. You can see how the `facet_grid()` expression is telling R to create the histogram of the variable mentioned in the ggplot function for the groups defined by the categorical input of interest (the factor "gdp_factor").
-
-
-Instead of using facets, we could overlay the histograms with a bit of transparency. Transparencies work better in screens than in printed document, so keep in mind this when deciding whether to use them instead of facets. The code is as follows:
-
-
-```{r}
-ggplot(gapminder_2007, aes(x = lifeExp, fill = gdp_factor)) + #"fill" identifies the factor grouping the cases
-  geom_histogram(position = "identity", alpha = 0.4) #"position = identity"" tells R to overlay the distributions and "alpha"" asks for the degree of transparency, a lower value will be more transparent
-```
-
-
-#Density plots
-
-
-For smoother distributions, you can use density plot. You should have a healthy amount of data to use these or you could end up with a lot of unwanted noise. Let's first look at the single density plot for all cases:
-
-
-```{r}
-ggplot(gapminder_2007, aes(x = lifeExp)) +
-  geom_density() 
-```
-
-
-In a density plot the area under the lines sum to 1 and the Y, vertical, axis now gives you the estimated probability for the values in the X, horizontal, axis.  As you can observe it provides a smoother representation of the distribution (as compared to the histograms).
-
-
-You can also use this to compare the distribution of a quantitative variable across the levels in a categorical variable (factor):
-
-
-```{r}
-#We are mapping "gdp_factor" as the variable colouring the lines 
-ggplot(gapminder_2007, aes(x = lifeExp, colour = gdp_factor)) + 
-  geom_density() 
-```
-
-
-Or you could use transparencies:
-
-
-```{r}
-ggplot(gapminder_2007, aes(x = lifeExp, fill = gdp_factor)) + 
-  geom_density(alpha = .3)
-```
-
-
-Did you notice the difference with the comparative histograms? By using density plots we are rescaling to ensure the same area for each of the levels in our grouping variable. This makes it easier to compare two groups that have different frequencies. The areas under the curve add up to 1 for both of the groups, whereas in the histogram the area within the bars represent the number of cases in each of the groups. If you have many more cases in one group than the other it may be difficult to make comparisons or to clearly see the distribution for the group with fewer cases. So, this is one of the reasons why you may want to use density plots.
-
 
 
 #Scatter plots with two variables
@@ -594,6 +482,19 @@ ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp)) +
 
 You may be wondering what about categorical data? So far we have only discussed various visualisations where at least one of your variables is quantitative. When your variable is categorical you can use bar plots. We map the factor variable in the aesthetics and then use the `geom_bar()` function to ask for a bar chart.
 
+Often we visualise data because we want to compare distributions. **Most of data analysis is about making comparisons**. We are going to explore whether the life expectancy is different for less affluent countries. The variable *gdpPercap* measures the country's GDP per capita. For the purposes of this illustration I want to dichotomise this variable. We've covered data manipulation already, so you should be comfortable splitting the data. Here we will be grouping anything that's got GDP higher than the mean as "high gdp", and everything else as "low gdp". 
+
+
+```{r}
+
+gapminder_2007 <- gapminder_2007 %>%
+  mutate(gdp_factor = if_else(gdpPercap > mean(gdpPercap), "high gdp", "low gdp"))
+
+gapminder_2007$gdp_factor <- as.factor(gapminder_2007$gdp_factor) #The variable we created was a character vector, this step transforms it into a factor (many functions designed to work with categorical variables expect a factor as an input, not just a character vector)
+
+```
+
+
 
 ```{r}
 ggplot(gapminder_2007, aes(x=gdp_factor)) +
@@ -635,34 +536,27 @@ First we need to scale the data to 100% within each stack and then plot. The cod
 
 
 ```{r}
-#First we create a subset with the relevant data
-.df1 <- data.frame(x = gapminder_2007$continent, z = gapminder_2007$gdp_factor)
-#Then we compute the proportions within the stacks
-.df1 <- as.data.frame(with(.df1, prop.table(table(x, z), margin = NULL)))
-#Finally we plot
-stbcf <- ggplot(.df1, aes(x = x, y = Freq, fill = z)) +
-  geom_bar(position = "fill", stat = "identity") +
-  scale_y_continuous(expand = c(0.01, 0), labels = scales::percent_format()) + #Adapts the scale of the y axis and express the values in percentage terms
-  xlab("Feelings of safety") + #Another way of changing the label for the x axis
-  ylab("Percent") + #Change the label for the Y axis
-  guides(fill = guide_legend(title = NULL)) #This removes the title of the legent (bcsvictim), since the labels of the categories are self-explanatory
-stbcf #autoprint the plot, notice how earlier rather than printing directly I stored the plot in the object with this name (the reason is that I want to use this plot later and don't want to rerun all the code again)
+
+library (scales) #load the scales library
+
+ggplot(gapminder_2007, aes(x=continent, fill=gdp_factor_2)) +
+geom_bar(position = "fill") +
+scale_y_continuous(labels = percent_format())
+
 ```
 
 
-
-```{r}
-rm(.df1) #to remove the data frame we created
-```
-
-Here we can see that the those that express less feelings of safety are more likely to have experienced a victimisation in the past 12 months.
+Here we can see which continents have higher percentage of the countries in high GDP category. 
 
 Sometimes, you may want to flip the axis, so that the bars are displayed horizontally. You can use the `coord_flip()` function for that.
 
 
 ```{r}
 #First we invoke the plot we created and stored earlier and then we add an additional specification with coord_flip()
-stbcf + coord_flip()
+ggplot(gapminder_2007, aes(x=continent, fill=gdp_factor_2)) +
+geom_bar(position = "fill") +
+scale_y_continuous(labels = percent_format())+ 
+  coord_flip()
 ```
 
 
@@ -701,9 +595,107 @@ waffle(t, rows = 10, colors=c("#a6cee3",
 You can read more about them [here](https://www.r-bloggers.com/making-waffle-charts-in-r-with-the-new-waffle-package/). 
 
 
+#Histograms
+
+
+[Histograms](http://www.learner.org/courses/againstallodds/unitpages/unit03.html) are useful ways of representing quantitative variables visually. 
+
+If you want to produce a histogram with the `ggplot` function you would use the following equivalent code:
+
+
+
+```{r}
+ggplot(gapminder_2007, aes(x = lifeExp)) + #The "aes" argument defines the aesthetics for the plot, here we are telling R the data we will represent comes from the gapminder data and our X variable, displayed in the X axis, will be life expectancy. So we are specfying we are using the "lifeExp" variable to display a position in the X axis.
+  geom_histogram() #If we just run the function in the first line we won't be plotting anything, we have to gell R what type of object, or geom, is going to represent the data that we specified in the aesthetics. There are multiple geoms we can use. For a histogram we use the geom_histogram.
+```
+
+
+So you can see that `ggplot` works in a way that you can add a series of additional specifications (layers, annotations). In this simple plot the `ggplot` function simply maps *lifeExp* as the variable to be displayed (as one of the aesthetics) and the dataset. Then you add the `geom_histogram` to tell R that you want this variable to be represented as a histogram. Later we will see what other things you can add.
+
+
+A histogram is simply putting cases in "bins" and then creates a bar for each bin. You can think of it as a visual grouped frequency distribution. The code we have used so far has used a bin-width of size range/30 as R kindly reminded us. But you can modify this parameter if you want to get a rougher or a more granular picture. In fact, you should *always* play around with different specifications of the bin-width until you find one that tells the full story in a parsimonious way.
+
+
+
+```{r}
+ggplot(gapminder_2007, aes(x = lifeExp)) +
+  geom_histogram(binwidth = 1) #We can pass arguments to the the geoms, here we are changing the size of the bins (for further details on other arguments you can check the help files)
+```
+
+
+Using bin-width of 1 we are essentially creating a bar for every one unit increase in the life expectancy. We can see that most countries have life expectancy of 60 or over.
+
+
+```{r}
+#Let's sum the number of countries with a value of 60 or over in life expectancy
+sum(gapminder_2007$lifeExp >= 60 )
+```
+
+
+We can see that the large majority of countries, 99 out of 142, have a life expectancy over 60. But we can also see that there are some countries that have a low life expectancies. You can see how we can use visualisations to show the data and get a first feeling for how it may be distributed.
+
+Now we can produce the plot:
+
+
+```{r}
+ggplot(gapminder_2007, aes(x = lifeExp)) +
+  geom_histogram(binwidth = 1) +
+  facet_grid(gdp_factor ~ .) #Facets are another element of the grammar of graphics, we use it to define subsets of the data to be represented as multiple groups, here we are asking R to produce two plots defined by the two levels of the factor we just created.
+```
+
+
+Visually this may not look great, but it begins to tell a story. We can see that there is a considerable lower proportion of countries with low life expectency in the group of countries that have higher life expectancies. It is a flatter, less skewed distribution. You can see how the `facet_grid()` expression is telling R to create the histogram of the variable mentioned in the ggplot function for the groups defined by the categorical input of interest (the factor "gdp_factor").
+
+
+Instead of using facets, we could overlay the histograms with a bit of transparency. Transparencies work better in screens than in printed document, so keep in mind this when deciding whether to use them instead of facets. The code is as follows:
+
+
+```{r}
+ggplot(gapminder_2007, aes(x = lifeExp, fill = gdp_factor)) + #"fill" identifies the factor grouping the cases
+  geom_histogram(position = "identity", alpha = 0.4) #"position = identity"" tells R to overlay the distributions and "alpha"" asks for the degree of transparency, a lower value will be more transparent
+```
+
+
+#Density plots
+
+
+For smoother distributions, you can use density plot. You should have a healthy amount of data to use these or you could end up with a lot of unwanted noise. Let's first look at the single density plot for all cases:
+
+
+```{r}
+ggplot(gapminder_2007, aes(x = lifeExp)) +
+  geom_density() 
+```
+
+
+In a density plot the area under the lines sum to 1 and the Y, vertical, axis now gives you the estimated probability for the values in the X, horizontal, axis.  As you can observe it provides a smoother representation of the distribution (as compared to the histograms).
+
+
+You can also use this to compare the distribution of a quantitative variable across the levels in a categorical variable (factor):
+
+
+```{r}
+#We are mapping "gdp_factor" as the variable colouring the lines 
+ggplot(gapminder_2007, aes(x = lifeExp, colour = gdp_factor)) + 
+  geom_density() 
+```
+
+
+Or you could use transparencies:
+
+
+```{r}
+ggplot(gapminder_2007, aes(x = lifeExp, fill = gdp_factor)) + 
+  geom_density(alpha = .3)
+```
+
+
+Did you notice the difference with the comparative histograms? By using density plots we are rescaling to ensure the same area for each of the levels in our grouping variable. This makes it easier to compare two groups that have different frequencies. The areas under the curve add up to 1 for both of the groups, whereas in the histogram the area within the bars represent the number of cases in each of the groups. If you have many more cases in one group than the other it may be difficult to make comparisons or to clearly see the distribution for the group with fewer cases. So, this is one of the reasons why you may want to use density plots.
+
+
 #Interactivity
 
-So we talked about plotly in the presentation. There are excellend resources available online, so I do reocmment some further reading. 
+While we did not cover interactivity in this session, there are excellent resources available online, so I do recommend some further reading. 
 
 Other ways of making your charts and overall presentation of information interactive include building [Shiny dashboards](https://rstudio.github.io/shinydashboard/).
 
@@ -715,9 +707,26 @@ There are many many ways to visualise and present data available, and this is a 
 
 #Resources
 
-- [R-for-Criminologists](http://jjmedinaariza.github.io/R-for-Criminologists/)
+Books:
+
+- [Edward Tufte: The Visual Display of Quantitative Information](https://www.edwardtufte.com/tufte/books_vdqi)
+- [Alberto Cairo: The Turthful Art](http://www.thefunctionalart.com/p/the-truthful-art-book.html)
+- [Andy Kirk: Data Visualisation: A Handbook for Data Driven Design](http://www.visualisingdata.com/book/)
 - [R4DS](http://r4ds.had.co.nz/data-visualisation.html)
 - [Layered Grammar of Graphics](http://vita.had.co.nz/papers/layered-grammar.pdf)
+
+Talks: 
+
+- [Amanda Cox at OpenVis Conference](https://www.youtube.com/watch?v=0L1tGo-DvD0)
+- [David McCandless](https://www.ted.com/talks/david_mccandless_the_beauty_of_data_visualization)
+
+Blogs/ other: 
+
+- [Ggplot cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+- [Tiffany Farrant-Gonzalez blog](http://www.tiffanyfarrant.com/blog/)
+- [Krisztina Szūcs](http://krisztinaszucs.com/)
+- [Nathan Yau](https://flowingdata.com/)
+- [R-for-Criminologists](http://jjmedinaariza.github.io/R-for-Criminologists/)
 - [Rcolourbrewer](http://ggplot2.tidyverse.org/reference/scale_brewer.html)
 
 
