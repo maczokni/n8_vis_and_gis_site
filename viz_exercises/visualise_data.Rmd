@@ -27,6 +27,8 @@ library(dplyr)
 
 ***
 
+#Introduction
+
 A picture is worth a thousand words; when presenting and interpreting data this basic idea also applies. There has been, indeed, a growing shift in data analysis toward more visual approaches to both interpretation and dissemination of numerical analysis. Part of the new data revolution consists in the mixing of ideas from visualisation of statistical analysis and visual design. Indeed data visualisation is one of the most interesting areas of development in the field.
 
 Good graphics not only help researchers to make their data easier to understand by the general public. They are also a useful way for understanding the data ourselves. In many ways it is very often a more intuitive way to understand patterns in our data than trying to look at numerical results presented in a tabular form. 
@@ -197,7 +199,7 @@ theme(axis.text.x = element_text(angle = 90, hjust = 1))                        
 ```
 
 
-You can add other things too. For example you can add the mean number of Banning Orders:
+You can add other things too. For example you can add the mean number of Banning Orders as a line:
 
 
 ```{r}
@@ -211,6 +213,56 @@ theme(axis.text.x = element_text(angle = 90, hjust = 1))                        
 
 
 This is basically all you need to know to build a graph!
+
+But remember all we learned about good design. So what do we want to be able to say here? Probably, we want to talk about which teams have the highest numbers of banning orders. Let's stick with the bar chart for this: 
+
+
+```{r}
+ggplot(data = fbo, aes(x = Club.Supported, y=Banning.Orders)) +  #data
+  geom_bar(stat = "identity") +                                  #geometry 1  
+  theme_minimal() +                                              #backgroud coordinate system
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))       #flip x axis labels
+
+```
+
+The text here is still a bit jumbled. Let's make sure that we can read everything.
+
+
+```{r}
+ggplot(data = fbo, aes(x = Club.Supported, y=Banning.Orders)) +  #data
+  geom_bar(stat = "identity") +                                  #geometry 1  
+  theme_minimal() +                                              #backgroud coordinate system
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))       #add size = 6 to make text smaller
+  
+        
+        
+```
+
+Reading sideways is weird, and the font is tiny. Another option is to flip the plot with `coord_flip()`: 
+
+
+```{r, fig.height=16}
+ggplot(data = fbo, aes(x = Club.Supported, y=Banning.Orders)) +  #data
+  geom_bar(stat = "identity") +                                  #geometry 1  
+  theme_minimal() +                                              #backgroud coordinate system
+  coord_flip()
+        
+        
+```
+
+Much better, but we could still tell a better story. We care about the order here. So it would make sense to sort the clubs by the number of banning orders. To do this, we can just use the `reorder()` function, and specify what we want to order, and by what variable. Like so: 
+
+```{r, fig.height=16}
+ggplot(data = fbo, aes(x = reorder(Club.Supported, Banning.Orders), y=Banning.Orders)) +  #data
+  geom_bar(stat = "identity") +                                  #geometry 1  
+  theme_minimal() +                                              #backgroud coordinate system
+  coord_flip()
+        
+        
+```
+
+
+Alright, now we can move on to exploring different types of charts in R. 
 
 
 #What graph should I use?
@@ -241,15 +293,6 @@ For example, most data visualisation experts agree that you should not use 3D gr
 Also often certain chart types are villanified. For example, the pie chart is one such example. A lot of people really dislike piecharts, eg see [here](http://www.storytellingwithdata.com/blog/2011/07/death-to-pie-charts) or [here](http://www.businessinsider.com/pie-charts-are-the-worst-2013-6?IR=T). 
 If you want to display proportion, research indicates that a square pie chart is more likely to be interpreted correctly by viewers: [see here](https://eagereyes.org/blog/2016/a-reanalysis-of-a-study-about-square-pie-charts-from-2009)
 
-<!--
-Also, in some cases bar plots can hide important features of your data, and might not be the most appropriate means for comparison: 
-
-
-![](/Users/reka/Desktop/course-incubator/images/barbarplots.jpg)
-
-This has lead to a [kickstarter campaign](https://www.kickstarter.com/projects/1474588473/barbarplots/description) around actually banning bar plots...!
-
--->
 In any case, the plot that you use depends on the data you are plotting, as well as the message you want to convey with the plot. 
 
 
@@ -326,8 +369,9 @@ library(gapminder)
 
 This package has a dataframe called "gapminder". This is an excerpt of the Gapminder data on life expectancy, GDP per capita, and population by country. To access the codebook (how you find out what variables are) use the "?". 
 
+##filter()
 
-This dataframe has data from 1952 to 2007, but here we want to focus on just the most recent year. So let's select only data from 2007. We can use the `filter()` function to achieve this. Inside, we have to specify *what* to filter, and the *condition* that must be met for something to be selected from it. In this case, we are filtering the gapminder dataset, and the condition we want the items we keep to meet is that the year is 2007 (`year == 2007`). 
+This dataframe has data from 1952 to 2007, but here we want to focus on just the most recent year. So let's select only data from 2007. We can use the `filter()` function to achieve this. This function is from the `dplyr` package, so make sure you have loaded it with the `library(dplyr)` command. Inside, we have to specify *what* to filter, and the *condition* that must be met for something to be selected from it. In this case, we are filtering the gapminder dataset, and the condition we want the items we keep to meet is that the year is 2007 (`year == 2007`). 
 
 
 ```{r}
@@ -482,18 +526,32 @@ ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp)) +
 
 You may be wondering what about categorical data? So far we have only discussed various visualisations where at least one of your variables is quantitative. When your variable is categorical you can use bar plots. We map the factor variable in the aesthetics and then use the `geom_bar()` function to ask for a bar chart.
 
-Often we visualise data because we want to compare distributions. **Most of data analysis is about making comparisons**. We are going to explore whether the life expectancy is different for less affluent countries. The variable *gdpPercap* measures the country's GDP per capita. For the purposes of this illustration I want to dichotomise this variable. We've covered data manipulation already, so you should be comfortable splitting the data. Here we will be grouping anything that's got GDP higher than the mean as "high gdp", and everything else as "low gdp". 
+
+##mutate()
+
+Often we visualise data because we want to compare distributions. **Most of data analysis is about making comparisons**. We are going to explore whether the life expectancy is different for less affluent countries. The variable *gdpPercap* measures the country's GDP per capita. For the purposes of this illustration I want to dichotomise this variable. Here we make use of the `mutate()` function to create a new variable with an `ifelse()` condition. Here we will be grouping anything that's got GDP higher than the mean as "high gdp", and everything else as "low gdp". 
 
 
 ```{r}
 
 gapminder_2007 <- gapminder_2007 %>%
   mutate(gdp_factor = if_else(gdpPercap > mean(gdpPercap), "high gdp", "low gdp"))
+```
 
-gapminder_2007$gdp_factor <- as.factor(gapminder_2007$gdp_factor) #The variable we created was a character vector, this step transforms it into a factor (many functions designed to work with categorical variables expect a factor as an input, not just a character vector)
+
+We also used the piping operator above. This is the `%>%` function. This pastes together functions, to make it easier to do more things in one bit of code. If you don't want to type it out each time, you can use the CTRL + SHIFT + M (or CMD + SHIFT + M for mac) shortcut. 
+
+
+We also want to make sure that this variable is a factor. The variable we created was a character vector, this step transforms it into a factor (many functions designed to work with categorical variables expect a factor as an input, not just a character vector)
+
+
+```{r}
+gapminder_2007$gdp_factor <- as.factor(gapminder_2007$gdp_factor) 
 
 ```
 
+
+Now we can plot this new variable we've created.
 
 
 ```{r}
@@ -577,6 +635,8 @@ Here is an example using some Brexit data:
 ```{r}
 library(waffle)
 ```
+
+We will specify colours with their hex value. 
 
 
 ```{r}
